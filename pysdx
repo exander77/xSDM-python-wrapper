@@ -66,11 +66,9 @@ with open(sys.argv[1], 'r') as sdxFile:
             
             print "{0}. Download: {1}".format(itemId, fileName)
             url = "http://{0}/WebStore/Account/SDMAuthorize.ashx?oiopu={1}&f={2}&oiop={3}&dl={4}".format(domain, oiopu, fileID, oiop, dlSelectLast);
-            #print url
             urlContent = requests.get(url).text
             soup2 = BeautifulSoup(urlContent)
             edv = soup2.find('edv').next;
-            #print "EDV: " + edv
             
             question = raw_input('Download Y/n? ');
             if question == "" or question == "Y" or question == "y":
@@ -95,7 +93,7 @@ with open(sys.argv[1], 'r') as sdxFile:
 
                 question = raw_input('Extract Y/n? ');
                 if question == "" or question == "Y" or question == "y":
-                    call(["xsdc", fileName])                
+                    call(["xsdm", fileName])                
 
             itemId = itemId + 1;
         else:
