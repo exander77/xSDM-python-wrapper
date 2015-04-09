@@ -8,3 +8,7 @@ pysdx is python wrapper around xSDM which is an extractor for SDC. It is based o
 Dependencies
 ------------
 You need to have xSDM installed and accessible in PATH. You can download it [xSDM](https://github.com/v3l0c1r4pt0r/xSDM).
+
+Usage
+-----
+It takes SDX file as a single parameter.
