@@ -23,6 +23,10 @@ def get(soup, name, index):
         return None;
     return element['value'];
 
+if len(sys.argv) < 2:
+    print >> sys.stderr, "Usage: pysdx some_file.sdx"
+    sys.exit(1) 
+
 with open(sys.argv[1], 'r') as sdxFile:
     sdxUrl = sdxFile.read()
     sdxUrlContent = requests.get(sdxUrl).text
@@ -66,34 +70,39 @@ with open(sys.argv[1], 'r') as sdxFile:
             
             print "{0}. Download: {1}".format(itemId, fileName)
             url = "http://{0}/WebStore/Account/SDMAuthorize.ashx?oiopu={1}&f={2}&oiop={3}&dl={4}".format(domain, oiopu, fileID, oiop, dlSelectLast);
+            print url
             urlContent = requests.get(url).text
             soup2 = BeautifulSoup(urlContent)
-            edv = soup2.find('edv').next;
-            
-            question = raw_input('Download Y/n? ');
-            if question == "" or question == "Y" or question == "y":
-
-                with open(fileName + ".key", "w") as keyFile:
-                    keyFile.write(edv)        
+            edvElement = soup2.find('edv')
+            if edvElement == None:
+                print >> sys.stderr, "ERROR: Expired or other error."
+            else:
+                edv = edvElement.next
                 
-                if os.path.isfile(fileName):
-                    os.remove(fileName)
-               
-                count = 1
-                print "\tFile: {0}".format(fileName)
-                print "\tPart({0}): {1}".format(count, partName)
-                size = lastSize = download(fileUrl, fileName)
-
-                while size == lastSize:
-                    lastSize = size
-                    count = count + 1
-                    partName = fileUrlSplit[-1] = "{0}.0{1}{2}".format(name2, count, ext)
-                    print "\tPart({0}): {1}".format(count, partName)
-                    size = download('/'.join(fileUrlSplit), fileName) 
-
-                question = raw_input('Extract Y/n? ');
+                question = raw_input('Download Y/n? ');
                 if question == "" or question == "Y" or question == "y":
-                    call(["xsdm", fileName])                
+
+                    with open(fileName + ".key", "w") as keyFile:
+                        keyFile.write(edv)        
+                    
+                    if os.path.isfile(fileName):
+                        os.remove(fileName)
+                   
+                    count = 1
+                    print "\tFile: {0}".format(fileName)
+                    print "\tPart({0}): {1}".format(count, partName)
+                    size = lastSize = download(fileUrl, fileName)
+
+                    while size == lastSize:
+                        lastSize = size
+                        count = count + 1
+                        partName = fileUrlSplit[-1] = "{0}.0{1}{2}".format(name2, count, ext)
+                        print "\tPart({0}): {1}".format(count, partName)
+                        size = download('/'.join(fileUrlSplit), fileName) 
+
+                    question = raw_input('Extract Y/n? ');
+                    if question == "" or question == "Y" or question == "y":
+                        call(["xsdm", fileName])                
 
             itemId = itemId + 1;
         else:
